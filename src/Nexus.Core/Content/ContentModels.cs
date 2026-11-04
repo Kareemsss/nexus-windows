@@ -12,12 +12,17 @@ namespace Nexus.Core.Content;
 
 public enum MediaPlayback { Playing, Paused, Stopped, Changing, Unknown }
 
+/// <summary>Off, repeat the whole list (album, playlist), or repeat the current track.</summary>
+public enum MediaRepeat { None, List, Track }
+
 public interface IMediaControls
 {
     Task TogglePlayPauseAsync();
     Task NextAsync();
     Task PreviousAsync();
     Task SeekAsync(TimeSpan position);
+    Task SetShuffleAsync(bool on) => Task.CompletedTask;
+    Task SetRepeatAsync(MediaRepeat mode) => Task.CompletedTask;
 }
 
 public sealed record MediaContent(
@@ -36,8 +41,21 @@ public sealed record MediaContent(
     bool CanNext,
     bool CanTogglePlay,
     bool CanSeek,
-    IMediaControls Controls)
+    IMediaControls Controls,
+    // Only set for music: a video player (YouTube in a browser, Movies & TV) never gets shuffle or repeat.
+    bool CanShuffle = false,
+    bool Shuffle = false,
+    bool CanRepeat = false,
+    MediaRepeat Repeat = MediaRepeat.None)
 {
+    /// <summary>The mode one press of the repeat button moves to: off, then the list, then the track.</summary>
+    public static MediaRepeat NextRepeat(MediaRepeat mode) => mode switch
+    {
+        MediaRepeat.None => MediaRepeat.List,
+        MediaRepeat.List => MediaRepeat.Track,
+        _ => MediaRepeat.None,
+    };
+
     /// <summary>Extrapolated playback position so the UI can tick smoothly without asking Windows.</summary>
     public TimeSpan EstimatePosition(DateTimeOffset now)
     {

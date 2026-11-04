@@ -10,6 +10,9 @@ public static class Glyphs
     public const string Pause = "\uE769";
     public const string Previous = "\uE892";
     public const string Next = "\uE893";
+    public const string Shuffle = "\uE8B1";
+    public const string RepeatAll = "\uE8EE";
+    public const string RepeatOne = "\uE8ED";
     public const string Music = "\uE8D6";
 
     public const string Mute = "\uE74F";

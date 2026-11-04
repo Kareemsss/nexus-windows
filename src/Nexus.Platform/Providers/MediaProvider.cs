@@ -9,6 +9,7 @@ using Nexus.Core.Content;
 using Nexus.Core.Diagnostics;
 using Nexus.Core.Plugins;
 using Nexus.Platform.Services;
+using Windows.Media;
 using Windows.Media.Control;
 using Session = Windows.Media.Control.GlobalSystemMediaTransportControlsSession;
 using SessionManager = Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager;
@@ -126,6 +127,18 @@ public sealed class MediaProvider : ProviderBase
             if (sampled.Year < 2000 || sampled > DateTimeOffset.UtcNow.AddMinutes(1)) sampled = DateTimeOffset.UtcNow;
             var controls = playback?.Controls;
 
+            // Shuffle and repeat belong to music players. Browsers do not offer them to Windows at all, and an app
+            // that plays both (Media Player) says when the current item is a video.
+            bool isVideo = (playback?.PlaybackType ?? props.PlaybackType) == MediaPlaybackType.Video;
+            bool canShuffle = !isVideo && (controls?.IsShuffleEnabled ?? false);
+            bool canRepeat = !isVideo && (controls?.IsRepeatEnabled ?? false);
+            var repeat = playback?.AutoRepeatMode switch
+            {
+                MediaPlaybackAutoRepeatMode.List => MediaRepeat.List,
+                MediaPlaybackAutoRepeatMode.Track => MediaRepeat.Track,
+                _ => MediaRepeat.None,
+            };
+
             var content = new MediaContent(
                 Title: props.Title.Trim(),
                 Artist: string.IsNullOrWhiteSpace(props.Artist) ? (props.AlbumArtist ?? string.Empty) : props.Artist,
@@ -142,7 +155,11 @@ public sealed class MediaProvider : ProviderBase
                 CanNext: controls?.IsNextEnabled ?? false,
                 CanTogglePlay: (controls?.IsPlayPauseToggleEnabled ?? false) || (controls?.IsPlayEnabled ?? false) || (controls?.IsPauseEnabled ?? false),
                 CanSeek: controls?.IsPlaybackPositionEnabled ?? false,
-                Controls: new SessionControls(session));
+                Controls: new SessionControls(session, ScheduleRefresh),
+                CanShuffle: canShuffle,
+                Shuffle: canShuffle && (playback?.IsShuffleActive ?? false),
+                CanRepeat: canRepeat,
+                Repeat: canRepeat ? repeat : MediaRepeat.None);
 
             Publish(content);
         }
@@ -271,17 +288,36 @@ public sealed class MediaProvider : ProviderBase
     private sealed class SessionControls : IMediaControls
     {
         private readonly Session _session;
-        public SessionControls(Session session) => _session = session;
+        private readonly Action _refresh;
+
+        public SessionControls(Session session, Action refresh)
+        {
+            _session = session;
+            _refresh = refresh;
+        }
 
         public Task TogglePlayPauseAsync() => Try(() => _session.TryTogglePlayPauseAsync().AsTask());
         public Task NextAsync() => Try(() => _session.TrySkipNextAsync().AsTask());
         public Task PreviousAsync() => Try(() => _session.TrySkipPreviousAsync().AsTask());
         public Task SeekAsync(TimeSpan position) => Try(() => _session.TryChangePlaybackPositionAsync(position.Ticks).AsTask());
 
-        private static async Task Try(Func<Task<bool>> op)
+        // The widget shows the new mode before the app confirms it. When the app refuses, nothing else would
+        // correct that, so read the real state back.
+        public Task SetShuffleAsync(bool on) => Try(() => _session.TryChangeShuffleActiveAsync(on).AsTask(), _refresh);
+
+        public Task SetRepeatAsync(MediaRepeat mode) => Try(() => _session.TryChangeAutoRepeatModeAsync(mode switch
         {
-            try { await op().ConfigureAwait(false); }
+            MediaRepeat.List => MediaPlaybackAutoRepeatMode.List,
+            MediaRepeat.Track => MediaPlaybackAutoRepeatMode.Track,
+            _ => MediaPlaybackAutoRepeatMode.None,
+        }).AsTask(), _refresh);
+
+        private static async Task Try(Func<Task<bool>> op, Action? onRefused = null)
+        {
+            bool done = false;
+            try { done = await op().ConfigureAwait(false); }
             catch (Exception ex) { Log.Debug("media", "Command failed (app may have closed): " + ex.Message); }
+            if (!done) onRefused?.Invoke();
         }
     }
 }

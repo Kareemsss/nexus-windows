@@ -134,7 +134,8 @@ public sealed class PreviewEvents
                     Duration = TimeSpan.FromSeconds(6), Accent = red,
                     Content = new MediaContent("Blinding Lights", "The Weeknd", "After Hours", "NEXUS Preview lab", MediaPlayback.Playing,
                         TimeSpan.FromSeconds(42), TimeSpan.FromSeconds(200), DateTimeOffset.UtcNow, null, "preview",
-                        red, true, true, true, false, NoMedia.Instance),
+                        red, true, true, true, false, NoMedia.Instance,
+                        CanShuffle: true, Shuffle: true, CanRepeat: true, Repeat: MediaRepeat.None),
                 });
                 break;
         }

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Nexus.App.Ui;
 using Nexus.Core.Activities;
@@ -68,6 +69,7 @@ public sealed class MediaWidget : Widget<MediaContent>
         private readonly TextBlock _title, _artist, _source, _elapsed, _remaining;
         private readonly ProgressTrack _progress;
         private readonly NexusButton _prev, _play, _next;
+        private readonly ModeButton _shuffle, _repeat;
         private readonly TextBlock _playGlyph;
         private readonly Equalizer _eq;
         private readonly DispatcherTimer _tick;
@@ -111,13 +113,32 @@ public sealed class MediaWidget : Widget<MediaContent>
                 _ = _m.Controls.TogglePlayPauseAsync();
             };
             var transport = Kit.Row(_prev, _play.WithMargin(18, 0, 18, 0), _next);
-            transport.HorizontalAlignment = HorizontalAlignment.Center;
+
+            // Shuffle sits under the elapsed time and repeat under the time left; the glyphs line up with those
+            // numbers, the hover circles reach into the padding. Prev, play and next stay centered either way.
+            _shuffle = new ModeButton(Glyphs.Shuffle, P) { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(-ModeButton.Inset, 0, 0, 0) };
+            _repeat = new ModeButton(Glyphs.RepeatAll, P) { HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 0, -ModeButton.Inset, 0) };
+            _shuffle.Click += (_, _) =>
+            {
+                bool on = !_m.Shuffle;
+                _m = _m with { Shuffle = on }; // optimistic, like play/pause
+                ApplyModes();
+                _ = _m.Controls.SetShuffleAsync(on);
+            };
+            _repeat.Click += (_, _) =>
+            {
+                var mode = MediaContent.NextRepeat(_m.Repeat);
+                _m = _m with { Repeat = mode };
+                ApplyModes();
+                _ = _m.Controls.SetRepeatAsync(mode);
+            };
+            var controlsRow = Kit.Columns((_shuffle, Kit.Star), (transport, Kit.Auto), (_repeat, Kit.Star));
 
             _root = new StackPanel { Width = Layout.ExpandedWidth, Margin = new Thickness(Layout.ExpandedPad, 16, Layout.ExpandedPad, 12) };
             _root.Children.Add(header);
             _root.Children.Add(_progress.WithMargin(0, 14, 0, 0));
             _root.Children.Add(times.WithMargin(0, 1, 0, 0));
-            _root.Children.Add(transport.WithMargin(0, 4, 0, 0));
+            _root.Children.Add(controlsRow.WithMargin(0, 4, 0, 0));
 
             _tick = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(500) };
             _tick.Tick += (_, _) => UpdateTimeline(animate: true);
@@ -141,12 +162,30 @@ public sealed class MediaWidget : Widget<MediaContent>
             _play.IsEnabledVisual = m.CanTogglePlay;
             _eq.SetBrush(Ctx.AccentBrushOf(Activity.Activity));
             _eq.SetRunning(playing, Animate(Ctx));
-            _progress.FillBrush = Ctx.Palette.Theme.Accent == AccentBehavior.Monochrome ? P.TextPrimary : Ctx.AccentBrushOf(Activity.Activity);
+            _progress.FillBrush = ActiveBrush();
+            ApplyModes();
             bool hasTimeline = m.Duration > TimeSpan.Zero;
             var vis = hasTimeline ? Visibility.Visible : Visibility.Hidden;
             _progress.Visibility = vis; _elapsed.Visibility = vis; _remaining.Visibility = vis;
             UpdateTimeline(animate: true);
             if (playing && hasTimeline) _tick.Start(); else _tick.Stop();
+        }
+
+        private Brush ActiveBrush() =>
+            Ctx.Palette.Theme.Accent == AccentBehavior.Monochrome ? P.TextPrimary : Ctx.AccentBrushOf(Activity.Activity);
+
+        private void ApplyModes()
+        {
+            var on = ActiveBrush();
+            _shuffle.Visibility = _m.CanShuffle ? Visibility.Visible : Visibility.Hidden;
+            _shuffle.Set(Glyphs.Shuffle, _m.Shuffle, on, _m.Shuffle ? "Shuffle on" : "Shuffle off");
+
+            _repeat.Visibility = _m.CanRepeat ? Visibility.Visible : Visibility.Hidden;
+            _repeat.Set(
+                _m.Repeat == MediaRepeat.Track ? Glyphs.RepeatOne : Glyphs.RepeatAll,
+                _m.Repeat != MediaRepeat.None,
+                on,
+                _m.Repeat switch { MediaRepeat.List => "Repeat all", MediaRepeat.Track => "Repeat one", _ => "Repeat off" });
         }
 
         private void UpdateTimeline(bool animate)
