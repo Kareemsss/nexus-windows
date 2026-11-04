@@ -1,6 +1,18 @@
-# Builds and tests NEXUS on a clean Windows runner and uploads a self-contained win-x64 build.
+# Builds and tests NEXUS on a clean Windows runner, then builds the installer.
+# Every run uploads the portable build and the installer as artifacts.
+# Pushing a tag like v1.2.3 (matching <Version> in Directory.Build.props) also publishes a GitHub Release
+# with NEXUS-Setup-1.2.3.exe attached.
 name: build
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed only to publish a release from a version tag
+
 jobs:
   build:
     runs-on: windows-latest
@@ -12,7 +24,30 @@ jobs:
       - run: dotnet build Nexus.sln -c Release
       - run: dotnet test tests/Nexus.Core.Tests -c Release --no-build
       - run: dotnet publish src/Nexus.App/Nexus.App.csproj -c Release -r win-x64 --self-contained true -o publish/win-x64
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+      - name: Build installer
+        shell: pwsh
+        run: ./scripts/build-installer.ps1 -SkipPublish
+
       - uses: actions/upload-artifact@v4
         with:
           name: nexus-win-x64
           path: publish/win-x64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NEXUS-Setup
+          path: installer/Output/*.exe
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag.TrimStart('v')
+          $setup = "installer/Output/NEXUS-Setup-$version.exe"
+          if (-not (Test-Path $setup)) { throw "Tag $tag does not match <Version> in Directory.Build.props, so $setup was not built." }
+          gh release create $tag $setup --title "NEXUS $version" --generate-notes

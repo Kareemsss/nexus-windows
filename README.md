@@ -93,17 +93,27 @@ You choose which sections appear and in what order, which tiles and buttons you 
 
 ## Install
 
-There is no release yet. You can download the latest build or build it yourself.
+1. Download **NEXUS-Setup-&lt;version&gt;.exe** from the [latest release](https://github.com/Kareemsss/nexus-windows/releases/latest).
+2. Run it. Setup installs NEXUS for your Windows account only, so it needs no administrator rights. You can choose to start NEXUS when you sign in and to add a desktop shortcut.
+3. NEXUS starts when setup finishes. On the first start, Settings opens and the island introduces itself.
 
-**Download the latest build** (needs a GitHub account):
+**Windows may warn you first.** The installer is not code-signed yet, so Windows SmartScreen can show "Windows protected your PC" for a new download. Click **More info**, then **Run anyway**.
 
-1. Open the [Actions tab](https://github.com/Kareemsss/nexus-windows/actions/workflows/build.yml) and click the newest run with a green check.
-2. Under **Artifacts**, download **nexus-win-x64**. GitHub keeps these downloads for 90 days.
-3. Unzip it anywhere, for example `%LOCALAPPDATA%\Programs\NEXUS`, and run `Nexus.exe`. It includes everything it needs, so you don't have to install .NET.
+**Requirements:** Windows 11. Windows 10 (build 19041 or later) also works, with a plain Settings background instead of Mica. NEXUS includes everything it needs, so you don't have to install .NET.
 
-**Requirements:** Windows 11. Windows 10 (build 19041 or later) also works, with a plain Settings background instead of Mica.
+**Updating:** run the newer installer. It closes NEXUS, updates it, starts it again, and keeps your settings and File Shelf.
 
-On the first start, Settings opens and the island introduces itself. To start NEXUS with Windows, turn on Settings › General › Start with Windows. It needs no admin rights. To quit, right-click the island or the tray icon and choose **Exit NEXUS**.
+**Uninstalling:** Windows Settings › Apps › Installed apps › NEXUS › Uninstall. You can choose to keep your settings for later or move them to the Recycle Bin.
+
+To quit NEXUS without uninstalling, right-click the island or the tray icon and choose **Exit NEXUS**. To change whether it starts with Windows, use Settings › General › Start with Windows.
+
+<details>
+<summary>Other ways to get NEXUS</summary>
+
+- **Newest build, before it is released:** open the [Actions tab](https://github.com/Kareemsss/nexus-windows/actions/workflows/build.yml), click the newest run with a green check, and download **NEXUS-Setup** (the installer) or **nexus-win-x64** (a portable folder: unzip it anywhere and run `Nexus.exe`). This needs a GitHub account, and GitHub keeps these downloads for 90 days.
+- **Build it yourself:** see [For developers](#for-developers).
+
+</details>
 
 **Try everything without waiting:** Settings › Preview lab plays sample events (music, a low battery, a meeting, the File Shelf and more) without changing anything on your PC.
 
@@ -172,6 +182,14 @@ dotnet run --project src/Nexus.App -- --settings    # start NEXUS and open Setti
 .\scripts\publish.ps1                      # creates .\publish\win-x64\Nexus.exe
 .\scripts\publish.ps1 -Runtime win-arm64
 ```
+
+**Build the installer** (needs [Inno Setup 6](https://jrsoftware.org/isinfo.php): `winget install JRSoftware.InnoSetup`):
+
+```powershell
+.\scripts\build-installer.ps1              # creates .\installer\Output\NEXUS-Setup-<version>.exe
+```
+
+The version comes from `<Version>` in `Directory.Build.props`. To publish a release, raise that version, commit, and push a matching tag (for example `git tag v1.1.0` then `git push origin v1.1.0`). The GitHub workflow builds the installer and attaches it to a new release.
 
 Only one copy runs at a time. Starting NEXUS again opens the running copy's Settings.
 
