@@ -1,0 +1,46 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nexus.Core", "src\Nexus.Core\Nexus.Core.csproj", "{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nexus.Platform", "src\Nexus.Platform\Nexus.Platform.csproj", "{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nexus.App", "src\Nexus.App\Nexus.App.csproj", "{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nexus.Core.Tests", "tests\Nexus.Core.Tests\Nexus.Core.Tests.csproj", "{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C04}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nexus.Samples.HourlyChime", "samples\Nexus.Samples.HourlyChime\Nexus.Samples.HourlyChime.csproj", "{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A1C2E10-6B1D-4C5E-9F21-0B6E1A7D3C05}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

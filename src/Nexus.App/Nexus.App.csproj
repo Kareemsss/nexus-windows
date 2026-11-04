@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <RootNamespace>Nexus.App</RootNamespace>
+    <AssemblyName>Nexus</AssemblyName>
+    <UseWPF>true</UseWPF>
+    <!-- WinForms is referenced ONLY for the shell tray icon (NotifyIcon). It is never imported globally. -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\nexus.ico</ApplicationIcon>
+    <TieredPGO>false</TieredPGO>
+    <!-- Memory: no background GC thread; the heap is small so blocking collections take milliseconds. -->
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nexus.Core\Nexus.Core.csproj" />
+    <ProjectReference Include="..\Nexus.Platform\Nexus.Platform.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\nexus.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Ask the GC to favour a small heap over raw allocation speed. -->
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="7" />
+  </ItemGroup>
+</Project>

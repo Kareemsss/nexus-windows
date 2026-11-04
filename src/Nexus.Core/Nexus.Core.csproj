@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pure, platform-neutral logic: activities, scheduling, state machine, motion math,
+       colour science, settings model and plugin contracts. Fully unit-testable. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Nexus.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Nexus.Core.Tests" />
+  </ItemGroup>
+</Project>

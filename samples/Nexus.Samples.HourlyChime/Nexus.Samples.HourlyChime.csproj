@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Example third-party provider. Build it, copy the DLL into %LOCALAPPDATA%\Nexus\plugins,
+       enable Settings › General › Load plugins, and restart NEXUS. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Private=false: the host already ships Nexus.Core; the plugin must bind to that same copy. -->
+    <ProjectReference Include="..\..\src\Nexus.Core\Nexus.Core.csproj" Private="false" />
+  </ItemGroup>
+</Project>
