@@ -1,190 +1,198 @@
-# NEXUS — Your Windows Activity Center
+<p align="center">
+  <img src="docs/nexus-icon.png" width="96" alt="NEXUS icon">
+</p>
 
-> *Invisible when nothing matters. Beautiful when something does. Powerful when you interact with it.*
+<h1 align="center">NEXUS</h1>
 
-NEXUS is an activity surface for the Windows desktop, inspired by Dynamic Island. It sits at the top of your screen as a small smoked-glass capsule. When something happens, it stretches, glows and morphs to show it, then settles back.
+<p align="center">
+  A Dynamic Island for Windows.<br>
+  A small glass capsule at the top of your screen that shows what your PC is doing, then gets out of the way.
+</p>
 
-It is a native **.NET 8 / WPF** application that talks to Windows directly through Win32, COM and WinRT. There is no web view and no third-party runtime dependency.
+<p align="center">
+  <a href="https://github.com/Kareemsss/nexus-windows/actions/workflows/build.yml"><img src="https://github.com/Kareemsss/nexus-windows/actions/workflows/build.yml/badge.svg" alt="Build status"></a>
+</p>
 
-![icon](docs/nexus-icon.png)
+<p align="center">
+  <img src="docs/screenshots/drop-zone.png" width="620" alt="The NEXUS island opened into the File Shelf drop zone, reading Drop to keep here, with three shelved items below">
+</p>
+
+When music starts, the volume changes, your battery runs low or an app turns on your microphone, the island stretches open to show it, then shrinks back to a small pill. Click it and it unfolds into **Island Center**, a compact dashboard for the things you check all day.
+
+NEXUS is a native Windows app built with .NET 8 and WPF. It talks to Windows directly, so there is no web view and nothing extra to install.
 
 ---
 
-## 1. Prerequisites
+## What it shows
 
-| Requirement | Version |
+| | |
 |---|---|
-| Windows | Windows 11 (primary target). Windows 10 build 19041 or later also works; the Settings window uses a solid background there instead of Mica. |
-| .NET SDK | 8.0.100 or newer (`winget install Microsoft.DotNet.SDK.8`) |
-| IDE (optional) | Visual Studio 2022 17.8+ with the *.NET desktop development* workload, VS Code with C# Dev Kit, or Rider |
+| **Music and video** | What is playing in Spotify, your browser, YouTube Music, Media Player and other apps, with artwork, a seek bar and play controls. |
+| **Volume** | The level, mute, headphones and Bluetooth audio, and a note when the output device changes. Scroll over the island to change the volume. |
+| **Battery** | Charging, time left and time to full. A warning at 20%, and an alert at 7% with a shortcut to Energy saver. |
+| **Microphone and camera** | Which app is using them, for as long as it does. Taken from the same place as Windows' own privacy icons. |
+| **Meetings** | A call timer when Teams, Zoom, Webex, Slack, Discord or Skype uses your mic, one button to mute the mic, and a countdown to your next meeting if you add a calendar link. |
+| **Network** | Wi-Fi name and signal, Ethernet, going offline, and VPNs such as WireGuard, AnyConnect, GlobalProtect, Zscaler and Tailscale. |
+| **Bluetooth** | Devices connecting and disconnecting. |
+| **Downloads** | A small indicator while a browser download runs, then a card with Open and Show in folder. |
+| **Screenshots** | A quick flash when you take one. |
+| **Notifications** | Other apps' notifications, in packaged (MSIX) builds only. See [Known limitations](#known-limitations). |
+| **File Shelf** | Files you dropped on the island, ready to drag into any app. [More below](#file-shelf). |
 
-The app needs no NuGet packages; the WinRT APIs come from the `net8.0-windows10.0.19041.0` target framework. Only the test project restores xUnit.
+Things that stay true for a while, like your mic being on or a download running, sit in a small second capsule beside the island instead of taking it over.
 
-## 2. Development environment
+## Using it
+
+| Do this | What happens |
+|---|---|
+| Hover over the island | It shows the time, date, Wi-Fi and battery. |
+| Click it | It expands what it is showing. Click again to open Island Center. |
+| Scroll over it | The system volume goes up or down. |
+| Right-click it | A menu with Island Center, Quiet mode, Settings and Exit. |
+| Drag files onto it | They go on the [File Shelf](#file-shelf). |
+| Click the small capsule beside it | Island Center opens. |
+| Press Esc or click somewhere else | Island Center closes. |
+
+The tray icon works too: left-click opens Island Center, right-click opens the menu.
+
+**Important things stay in front.** A critical battery alert always wins. Quick events like a volume change cover your music for a moment, then the music comes back. Nothing disappears while your pointer is on it.
+
+**Games and full-screen apps** get Gaming mode by default: only critical alerts and important events such as a meeting starting can appear. You can also choose Critical only, Hide, or Always show. Privacy indicators stay visible in every mode.
+
+**Quiet mode** silences notifications, network and download events. Critical alerts, privacy indicators and responses to what you do yourself still appear.
+
+**Hide completely** keeps the island off screen all the time. Push the pointer against the top edge to slide it out (Reveal at screen edge is on by default). Critical alerts still slide out on their own.
+
+## File Shelf
+
+Drag any file or folder onto the island and it stays there. Later, drag it out into an email, a chat, an upload box or another folder. No more juggling two Explorer windows.
+
+<p align="center">
+  <img src="docs/screenshots/island-center-shelf.png" width="460" alt="The Shelf section of Island Center listing img0.jpg, win.ini and the Downloads folder, each with buttons to show it in its folder, copy its path or remove it">
+</p>
+
+- The island opens into a drop zone as soon as files reach it, and tells you what you are adding.
+- Island Center lists everything on the shelf with its icon. Click an item to open it, or use the buttons to show it in its folder, copy its path or remove it.
+- Drag one item out, or use **Drag all**. Clicking Drag all copies every file instead, ready to paste. **Clear** empties the shelf.
+- Once another app accepts an item, it leaves the shelf. You can keep items instead in Settings › Behavior.
+- Everything works from the keyboard: Tab moves between items, Enter opens, Delete removes, Ctrl+C copies the file and Ctrl+Shift+C copies its path.
+
+The shelf only remembers where your files are. It never copies or reads them. It holds up to 24 items, and dropping something that is already there moves it to the top. If you move or delete the original, the item says **Moved or deleted**.
+
+Browser images and mail attachments are not files yet, so the island says so instead of taking them:
+
+<p align="center">
+  <img src="docs/screenshots/drop-refused.png" width="620" alt="The island reading Only files and folders can be shelved, with the hint Save browser images and attachments as files first">
+</p>
+
+## Island Center
+
+Click the island once more after it expands, or click it while it is idle, and it unfolds into Island Center: the clock, which apps are using your mic or camera, what is playing, the File Shelf, a per-app volume mixer, your next meeting or the call you are in, status tiles for audio, battery, network and Bluetooth, and quick buttons for Quiet mode, mic mute, sound, network, Bluetooth and settings.
+
+You choose which sections appear and in what order, which tiles and buttons you see, and whether empty sections hide themselves (Settings › Island Center).
+
+## Install
+
+There is no release yet. You can download the latest build or build it yourself.
+
+**Download the latest build** (needs a GitHub account):
+
+1. Open the [Actions tab](https://github.com/Kareemsss/nexus-windows/actions/workflows/build.yml) and click the newest run with a green check.
+2. Under **Artifacts**, download **nexus-win-x64**. GitHub keeps these downloads for 90 days.
+3. Unzip it anywhere, for example `%LOCALAPPDATA%\Programs\NEXUS`, and run `Nexus.exe`. It includes everything it needs, so you don't have to install .NET.
+
+**Requirements:** Windows 11. Windows 10 (build 19041 or later) also works, with a plain Settings background instead of Mica.
+
+On the first start, Settings opens and the island introduces itself. To start NEXUS with Windows, turn on Settings › General › Start with Windows. It needs no admin rights. To quit, right-click the island or the tray icon and choose **Exit NEXUS**.
+
+**Try everything without waiting:** Settings › Preview lab plays sample events (music, a low battery, a meeting, the File Shelf and more) without changing anything on your PC.
+
+## Make it yours
+
+The Settings app applies every change as you make it.
+
+- **Appearance:** six themes (Obsidian, Fluent, Aurora, Cyber, Minimal and Custom). Custom lets you set transparency, frost, glow, corner roundness and accent colour behaviour. Also island size, animation speed, Reduce motion, Eco mode and the idle style (capsule, line or dot).
+- **Position & displays:** top center, top left, top right, bottom center or a custom spot, at any distance from the edge. Show it on your main display, a specific one, or whichever display your pointer is on.
+- **Behavior:** what hover and click do, scroll for volume, Quiet mode, Hide completely, song pop-ups, full-screen behaviour and File Shelf options.
+- **Modules:** switch any module off. Each one shows whether it is running and, if not, why.
+- **Privacy:** what NEXUS reads and what it stores, plus switches that hide notification previews and meeting titles while you share your screen.
+
+## Privacy
+
+- No telemetry, no account, and no network requests except the calendar link you choose to add.
+- No admin rights, no keyboard hooks, no drivers, and no code injected into other apps.
+- Settings live in `%LOCALAPPDATA%\Nexus`. Notification text and meeting titles stay in memory and are never written to disk.
+- The File Shelf saves only file paths, in `%LOCALAPPDATA%\Nexus\shelf.json`, and only while *Remember shelf after restart* is on. Turning it off deletes the file.
+- The log records which parts of NEXUS ran and any errors. It never records song titles, notification text, meeting subjects, file names or paths.
+
+## Known limitations
+
+| Area | Why | What NEXUS does |
+|---|---|---|
+| Blur behind the glass | Windows has no supported way to blur behind an animated, irregular, transparent window. | Layered glass tuned to stay readable on light and dark wallpapers. The Settings window uses real Mica. |
+| Notifications | Windows only lets packaged apps (MSIX) read other apps' notifications, and only after you allow it. | The module shows *Unavailable* with the reason. To enable it, package NEXUS as MSIX with the `userNotificationListener` capability, then allow it in Windows Settings › Privacy & security › Notifications. |
+| Incoming calls | Teams, Zoom and similar apps have no public way to report a ringing call. | A call appears as soon as the app takes the microphone. Packaged builds also see ringing notifications. |
+| Teams mute button | Teams has no public way to control its own mute. | Mute mic mutes the Windows microphone, which silences every app. |
+| Calendar | NEXUS has no Microsoft account sign-in by design. | Add an ICS link (Outlook can publish one). Daily and weekly repeats work fully. For monthly and yearly repeats, only the first one shows. |
+| Download progress | Browsers don't tell other apps how big a download is. | A "downloading" indicator, then a completion card. |
+| Mic and camera | Only apps running under your account are visible. | |
+| Wi-Fi name | Newer Windows builds may hide the network name from apps without location permission. | The tile says Connected without a name. |
+| Equalizer bars | They are decoration. A real spectrum would mean capturing your audio. | Capped at 24 frames a second, paused when hidden, and can be turned off. |
+| Clicks at the very edge | Windows sends clicks on any pixel that is not fully transparent to the window. | The shadow is only a few pixels wide and very faint, so a click right at the edge may land on NEXUS. |
+| File Shelf and admin apps | Windows blocks dragging from an app running as administrator to a normal app. | Drag from a normal Explorer window, or run the other app normally. |
+
+---
+
+## For developers
+
+**You need:** the .NET 8 SDK or newer (`winget install Microsoft.DotNet.SDK.8`), and optionally Visual Studio 2022 17.8+ with *.NET desktop development*, VS Code with C# Dev Kit, or Rider. The app uses no NuGet packages. Only the test project pulls in xUnit.
 
 ```
 Nexus.sln
-├─ src/Nexus.Core            net8.0           pure logic, no Windows dependency, unit-tested
-├─ src/Nexus.Platform        net8.0-windows   Win32 / COM / WinRT interop + all system providers
-├─ src/Nexus.App             net8.0-windows   WPF: island, rendering, widgets, Island Center, settings
-├─ tests/Nexus.Core.Tests                     xUnit: arbiter, state machine, springs, colour, ICS
-├─ samples/Nexus.Samples.HourlyChime          example third-party plugin
-└─ .github/workflows/build.yml                CI: build + test + self-contained publish on windows-latest
+├─ src/Nexus.Core            net8.0           logic with no Windows dependency, unit-tested
+├─ src/Nexus.Platform        net8.0-windows   Win32, COM and WinRT interop, and every system module
+├─ src/Nexus.App             net8.0-windows   WPF: the island, rendering, widgets, Island Center, settings
+├─ tests/Nexus.Core.Tests                     xUnit tests
+├─ samples/Nexus.Samples.HourlyChime          an example plugin
+└─ .github/workflows/build.yml                builds, tests and publishes on every push
 ```
 
-## 3. Build
+**Build, test and run:**
 
 ```powershell
 dotnet build Nexus.sln -c Debug
-dotnet test  tests/Nexus.Core.Tests
+dotnet test tests/Nexus.Core.Tests
+dotnet run --project src/Nexus.App                  # start NEXUS
+dotnet run --project src/Nexus.App -- --settings    # start NEXUS and open Settings
 ```
 
-To build a self-contained version that runs without .NET installed:
+**Publish a version that runs without .NET installed:**
 
 ```powershell
-.\scripts\publish.ps1                    # → .\publish\win-x64\Nexus.exe
+.\scripts\publish.ps1                      # creates .\publish\win-x64\Nexus.exe
 .\scripts\publish.ps1 -Runtime win-arm64
 ```
 
-Push to GitHub and the included workflow builds, tests and uploads a ready-to-run `nexus-win-x64` artifact.
+Only one copy runs at a time. Starting NEXUS again opens the running copy's Settings.
 
-## 4. Run
+<details>
+<summary><b>Debugging</b></summary>
 
-```powershell
-dotnet run --project src/Nexus.App                  # normal start
-dotnet run --project src/Nexus.App -- --settings    # start and open Settings
-```
+- Set **Nexus.App** as the startup project and press F5. Errors in the UI are caught and logged so the island keeps running. Turn on *break when CLR exceptions are thrown* to stop where they happen.
+- The log is at `%LOCALAPPDATA%\Nexus\logs\nexus.log`. For more detail, set `Log.MinimumLevel = LogLevel.Debug` in `App.OnStartup`.
+- Settings are at `%LOCALAPPDATA%\Nexus\settings.json`. Out-of-range values are repaired when NEXUS loads them. A file it can't read is kept as `settings.json.corrupt`, and NEXUS starts with defaults.
+- Settings › Modules shows each module as Running, Unavailable or Error, with the reason.
+- All animation spring presets live in `Nexus.Core/Motion/Spring.cs` (`Morph`, `Content`, `Ambient`, `Micro`).
 
-- **First launch:** Settings opens and the island introduces itself.
-- **Exit:** right-click the island or the tray icon, then choose **Exit NEXUS**.
-- **Single instance:** launching NEXUS again opens the running instance's Settings instead of starting a second copy.
-- **Try every state without waiting for real events:** open **Settings › Preview lab**. It plays simulated events and changes nothing on your system.
+</details>
 
-## 5. Debug
-
-- Set **Nexus.App** as the startup project and press F5. UI exceptions are caught and logged so the overlay keeps running; turn on *break on thrown CLR exceptions* to catch them at the source.
-- **Log file:** `%LOCALAPPDATA%\Nexus\logs\nexus.log`. It records component names, states and errors only — never track titles, notification text or meeting subjects. For verbose output, set `Log.MinimumLevel = LogLevel.Debug` in `App.OnStartup`.
-- **Settings file:** `%LOCALAPPDATA%\Nexus\settings.json`. Out-of-range values are repaired on load. If the file is corrupt, it is backed up as `settings.json.corrupt` and NEXUS starts with defaults.
-- **Provider health:** **Settings › Modules** shows each module's live status (Running, Unavailable or Error) and the reason.
-- **Motion tuning:** all spring presets live in `Nexus.Core/Motion/Spring.cs` (`Morph`, `Content`, `Ambient`, `Micro`).
-
-## 6. Implemented features (V1)
-
-**Island and motion**
-- **Overlay window**
-  - Native transparent, topmost overlay that never takes focus.
-  - Fully transparent pixels are click-through, so only the glass itself catches the mouse.
-- **State model**
-  - Idle → Peek (hover) → Compact → Expanded → Island Center, plus a critical-alert treatment.
-- **Continuous morphing**
-  - Width, height and corner radius are spring-driven, with a small controlled overshoot.
-  - Motion is layered: the container moves first, content follows about 60 ms later, and Island Center sections stagger in last.
-  - When content changes, the old content cross-fades out under the moving glass edge while the new content scales and slides in.
-- **Efficiency**
-  - A single frame clock runs only while something is moving. A settled island draws zero frames.
-- **Accessibility**
-  - Reduce-motion and animation-speed settings.
-  - Each theme also has its own motion personality (Cyber is slightly snappier).
-
-**Visual system**
-- **Layered smoked glass**
-  - Body gradient, frost diffusion, an atmosphere layer (Aurora), ambient light, a specular rim and an accent rim.
-  - A soft shadow drawn only outside the body, so translucent glass is never darkened.
-- **Ambient colour engine**
-  - Takes the dominant hue from album art, then caps its saturation and brightness so it stays subtle.
-  - Battery is green, amber or red; privacy is warm orange; meetings are indigo; Bluetooth and network are blue/cyan.
-  - Low battery slowly shifts the idle island's glow toward amber.
-- **Edge Pulse**
-  - Rim bloom for Bluetooth, network, VPN, mic and notifications.
-  - Energy sweep when the charger is connected.
-  - Flash when a screenshot is taken.
-- **Satellite capsule**
-  - A detached mini-island next to the main one that holds ongoing background state: mic or camera in use, downloads, low battery, offline, or a call while music plays.
-  - Hover to see labels; click to open Island Center.
-- **Themes**
-  - Obsidian (default), Fluent, Aurora, Cyber, Minimal and Custom.
-  - Custom exposes transparency, frost, glow, corner roundness and accent behaviour, plus global scale, speed and idle style.
-  - All themes share the same components.
-- **Typography and icons**
-  - Segoe UI Variable text, with fixed-width digits so timers and percentages never make the island jitter.
-  - Segoe Fluent Icons, falling back to Segoe MDL2 Assets. No emoji.
-
-**Priority and context**
-- **Priority engine (Critical / High / Medium / Low)**
-  - Critical always wins.
-  - Short-lived events beat steady state: volume briefly covers music, then music returns without being rebuilt.
-  - Whatever is currently shown stays put rather than flickering between activities.
-  - Events of equal priority wait in a first-in, first-out queue, and each one's display time starts only when it is actually shown.
-  - Low-value events that can't be shown within about 2 s are dropped.
-  - Anything under the mouse pointer is never auto-dismissed.
-- **Simultaneous activities:** one foreground activity plus up to four satellite indicators.
-- **Fullscreen and gaming**
-  - Detects exclusive fullscreen games, presentation mode and borderless fullscreen windows.
-  - Behaviour is configurable: Gaming mode (critical and high-priority only), Critical only, Hide, or Always show.
-  - Privacy indicators stay visible even in gaming mode.
-- **Quiet mode (Do Not Disturb)**
-  - Silences notifications, connectivity and transfer events.
-  - Never silences critical alerts, privacy indicators or feedback to your own actions.
-
-**Windows integrations** (all event-driven, no aggressive polling)
-
-| Module | Windows source | Notes |
-|---|---|---|
-| Media | Windows media session API (the same source as the Windows media flyout) | Works with Spotify, Edge, Chrome, Firefox, YouTube Music, Media Player and others. Shows artwork, a seekable progress bar and previous/play/next. Paused media steps aside after 45 s. |
-| Volume | Windows Core Audio change notifications | Shows mute, headphone and Bluetooth states and announces output-device switches. **Scroll over the island to change volume.** |
-| Battery | `PowerManager` events + the battery report | Charging sweep, time-to-full and time-remaining. Low battery at 20%; critical alert at 7% with an Energy saver shortcut. |
-| Mic / camera | The same registry store behind Windows' own privacy indicators, watched with `RegNotifyChangeKeyValue` | Shows the responsible app. The indicator stays while the device is in use. |
-| Meetings | Mic usage by Teams, Zoom, Webex, Slack, Discord or Skype, plus an optional ICS calendar link | Call timer, mic and camera state, a system-wide mic mute, a "Meeting in N min" countdown and a "Starting now" card with Join. |
-| Network / VPN | `NetworkStatusChanged` + `NetworkAddressChanged` | Wi-Fi name and signal, Ethernet, offline indicator, and VPN/tunnel adapters such as WireGuard, AnyConnect, GlobalProtect, Zscaler and Tailscale. |
-| Bluetooth | `DeviceWatcher` (Classic + LE) | Connect/disconnect glances; audio devices get a headphones icon. |
-| Notifications | `UserNotificationListener` | Requires a packaged (MSIX) build — see limitations. Compact sender-and-message view; expanded view with Dismiss. |
-| Downloads | `FileSystemWatcher` on the Downloads folder | In-progress indicator, then a completion card with Open and Show in folder. |
-| Screenshots | Clipboard listener + Screenshots folder | Flash confirmation, shown once even when both signals fire. |
-
-**File Shelf**
-- **Park files on the island:** drag files or folders from Explorer, the desktop or any app onto the island. It opens into a drop zone ("Drop to keep here") that says what you are adding, then a short glance confirms it and the satellite shows the count ("Shelf · 3 files").
-- **Drag them out later:** Island Center's Shelf section lists every item with its Explorer thumbnail or icon. Drag one item, or "Drag all", into any app: a mail, a chat, an upload box, another folder. By default an item leaves the shelf once another app accepted it; a moved file always leaves.
-- **Per item:** click or Enter opens, Show in folder, Copy path, Remove; Ctrl+C copies the file itself, so Ctrl+V pastes it in Explorer or a mail. "Drag all" clicked copies every file. "Clear" empties the shelf. Every row and button works from the keyboard.
-- **Honest about what it keeps:** only paths are stored, never the files. Up to 24 items, newest first; dropping a path that is already there moves it to the top. Items whose original was moved or deleted show "Moved or deleted". Drags that carry no real file (a browser image, a mail attachment) are refused with a hint to save them first.
-- **Settings:** Behavior › File Shelf (remember after restart, keep items after dragging them out, clear), Island Center (position or hide the section), Modules › File Shelf (switch the feature off entirely). Preview lab shows the drop zone and adds sample items that are never saved.
-
-**App**
-- **Island Center:** clock, privacy strip, now playing, file shelf, next meeting or call in progress, system tiles (audio, battery, network, Bluetooth), and quick actions (Quiet, Mic, Sound, Network, Bluetooth, Settings). Every section has an empty state.
-- **Context menu:** drawn in the island's own glass, from both the island and the tray icon — Island Center, Quiet mode, Settings, Exit.
-- **Settings app:** Mica background with native caption buttons on Windows 11. Pages: General, Appearance, Position & displays, Behavior, Modules, Privacy, Preview lab and About. Every change applies live.
-- **Multi-monitor and DPI**
-  - Per-monitor DPI aware, with placement in physical pixels.
-  - Can follow the primary monitor, a specific monitor, or the monitor under your cursor.
-  - Re-anchors when monitors are connected or removed, or when resolution or scaling changes.
-- **Position:** top center, top left, top right, bottom center, or a custom horizontal position, each with a distance from the screen edge.
-- **Start with Windows:** uses `HKCU\…\Run`. No admin rights and no scheduled tasks.
-- **Resilience**
-  - Each provider is isolated; one that fails is marked Error and the rest keep running.
-  - Graceful fallbacks for: missing artwork, an app that exits mid-session, an unplugged monitor, an Explorer restart (the tray icon re-registers), no audio service, overly long text, missing icons, a broken plugin widget, and a corrupt settings file.
-
-## 7. Known limitations
-
-| Area | Limitation | What NEXUS does instead |
-|---|---|---|
-| Backdrop blur | Windows has no supported API to blur behind an animated, irregularly shaped, transparent overlay window. The undocumented blur API blurs the whole rectangular window; system backdrops need a normal window with fixed corners. | Layered glass (frost, gradients, ambient light) tuned to stay readable on light and dark wallpapers. The Settings window uses real Mica. |
-| Notifications | Windows only lets apps with package identity (MSIX or a sparse package) read other apps' notifications, and only after you consent. Unpackaged runs (`dotnet run`) can't. | The module shows *Unavailable* with the reason. NEXUS's own events still use the notification layout. To enable it, package with MSIX, declare `<uap3:Capability Name="userNotificationListener"/>`, then allow access in Settings › Privacy & security › Notifications. |
-| Incoming calls | Teams, Zoom and similar apps expose no public local API for a ringing call. | A call appears as soon as the app takes the microphone. In a packaged build, ringing toasts also arrive through notifications. |
-| Teams mute | Teams' in-app mute button has no public local API. | "Mute mic" mutes the **Windows** microphone, which silences every app — the safer privacy behaviour anyway. |
-| Calendar | V1 deliberately has no Microsoft Graph sign-in (no accounts, no tokens). | Optional ICS link (Outlook can publish one). Daily and weekly repeats are fully supported (interval, count, until, weekdays, exceptions). For monthly and yearly repeats, only the first occurrence is shown. |
-| Download progress | Browsers don't expose a download's total size to other apps. | An indeterminate "downloading" indicator plus a completion card. |
-| Mic / camera | Only apps running under your user account are visible; system services are recorded elsewhere. | — |
-| Wi-Fi name | Newer Windows builds may hide the network name from apps without location permission. | The tile shows "Connected" without a name. |
-| Equalizer | Decorative. A real per-app spectrum would require hooking audio capture. | Capped at 24 FPS, stops when hidden, and can be turned off in Appearance. |
-| File Shelf and admin apps | Windows blocks drag-and-drop from an app running as administrator to a normal one (UIPI). NEXUS never sees such a drag, so it cannot explain it. | Files can't be dragged from apps running as administrator onto NEXUS. Drag from a normal Explorer window instead, or run that app normally. |
-| File Shelf and virtual files | Browser images, Outlook attachments and similar drags have no file on disk, only data the target app would have to save. | The drop zone refuses them and says to save them as files first. |
-| Edge clicks | A layered window catches clicks on any pixel that isn't fully transparent. | The soft shadow is only a few pixels wide and very faint, so clicks right at the island's edge may land on NEXUS. |
-
-## 8. Architecture
+<details>
+<summary><b>How it works</b></summary>
 
 ```mermaid
 flowchart LR
   subgraph Platform["Nexus.Platform (Windows APIs)"]
-    P[Providers: Media · Volume · Battery · Privacy · Meetings · Network · Bluetooth · Notifications · Downloads · Capture]
+    P[Modules: Media · Volume · Battery · Privacy · Meetings · Network · Bluetooth · Notifications · Downloads · Capture]
     FS[FullscreenDetector]
     MS[MonitorService]
   end
@@ -192,7 +200,7 @@ flowchart LR
     HUB[(ActivityHub<br/>event bus + queue)]
     ARB[ActivityArbiter<br/>priority manager]
     SM[IslandStateMachine]
-    M[Springs · ColorExtractor · ICS]
+    M[Springs · ColorExtractor · ICS · Shelf]
   end
   subgraph App["Nexus.App (WPF)"]
     CTL[IslandController]
@@ -210,23 +218,27 @@ flowchart LR
   MS --> POS --> WIN
 ```
 
-| Concept from the brief | Implementation |
+A module receives a Windows event (on any thread) and posts an immutable `Activity`. The hub merges bursts and hands them to the UI thread. The controller asks the arbiter what should be in front under the current rules (full screen, Quiet mode, disabled modules), and the state machine combines that with what you are doing (hovering, clicking, Island Center open, dragging files). The presenter then retargets its springs and updates or swaps the widget. The frame clock runs only until everything settles, and NEXUS wakes up again only at the exact moment something expires.
+
+| Part | Where |
 |---|---|
-| EventBus / EventQueue | `Core/Activities/ActivityHub.cs` — thread-safe, merges bursts of changes into one update, and tracks when each item was posted, queued and shown. |
-| PriorityManager | `Core/Scheduling/ActivityArbiter.cs` — a pure function of the current activities and policy (fullscreen, quiet mode, disabled modules). |
-| StateManager | `Core/State/IslandStateMachine.cs` — explicit modes plus user intent; time is passed in, so it is fully deterministic and testable. |
-| AnimationEngine | `Core/Motion/Spring.cs` (spring maths) and `App/Motion/Animator.cs` (on-demand frame clock, `Spring`, `ColorSpring`). |
-| ThemeEngine | `App/Theming` — themes are data; every component reads the resolved `Palette`. |
-| Rendering | `App/Rendering/IslandSurface.cs` — every glass layer and effect, drawn in one `OnRender`. |
-| PluginManager | `App/Composition/ProviderManager.cs` — provider lifecycle, failure isolation, module toggles and plugin loading. |
-| IslandWindow / PositionManager | `App/Island` — Win32 window styles; monitor, DPI and anchor placement. |
-| Composition root | `App/Composition/NexusHost.cs` — the only place services are created. |
+| Event bus and queue | `Core/Activities/ActivityHub.cs` |
+| Priority rules | `Core/Scheduling/ActivityArbiter.cs` |
+| Island states (Idle, Peek, Compact, Expanded, Center, Drop) | `Core/State/IslandStateMachine.cs` |
+| Animation | `Core/Motion/Spring.cs` and `App/Motion/Animator.cs` |
+| Themes | `App/Theming` |
+| Glass rendering | `App/Rendering/IslandSurface.cs` |
+| Module lifecycle and plugins | `App/Composition/ProviderManager.cs` |
+| Window and placement | `App/Island` |
+| File Shelf | `Core/Shelf`, `App/Shelf`, `App/Center/ShelfCard.cs`, `App/Widgets/DropZoneView.cs` |
+| Where everything is created | `App/Composition/NexusHost.cs` |
 
-**How an event flows:** a provider receives a Windows event (on any thread) and posts an immutable `Activity` → the hub merges bursts onto the UI thread → the controller asks the arbiter what should dominate under the current policy → the state machine combines that with what the user is doing (hover, click, Island Center) → the presenter retargets its springs and updates or swaps the widget → the frame clock runs until everything settles, then stops. Re-checks are scheduled only for the exact moment something expires; otherwise NEXUS sleeps.
+</details>
 
-## 9. Creating a new provider
+<details>
+<summary><b>Writing a module (provider)</b></summary>
 
-A provider detects events, creates and updates activities, assigns a priority, supplies content and actions, and removes activities when they end.
+A provider listens to one source, turns events into activities with a priority, content and actions, and removes them when they end.
 
 ```csharp
 public sealed class DockerProvider : ProviderBase
@@ -243,11 +255,11 @@ public sealed class DockerProvider : ProviderBase
 
     private void OnBuildProgress(string image, double progress) => Post(new Activity
     {
-        Id = "docker.build." + image,            // stable id → posting again updates in place
+        Id = "docker.build." + image,            // a stable id: posting again updates it in place
         SourceId = Id,
         Priority = ActivityPriority.Low,
-        Category = ActivityCategory.Transfer,     // quiet mode and gaming mode understand categories
-        CanBeForeground = false,                  // only a satellite indicator while running
+        Category = ActivityCategory.Transfer,     // Quiet mode and Gaming mode understand categories
+        CanBeForeground = false,                  // only a small indicator beside the island while it runs
         Content = new GenericContent(Glyphs.Download, $"Building {image}", null, progress),
         Indicator = new IndicatorSpec(Glyphs.Download, NexusColor.FromHex("#2496ED"), $"{image} {progress:P0}", progress),
     });
@@ -267,18 +279,16 @@ public sealed class DockerProvider : ProviderBase
 }
 ```
 
-- **Built in:** register the provider in `NexusHost.RegisterProviders`. It appears in **Settings › Modules** automatically.
-- **As a plugin:** build a class library that references `Nexus.Core` (see `samples/Nexus.Samples.HourlyChime`), copy the DLL into `%LOCALAPPDATA%\Nexus\plugins`, enable **Settings › General › Load plugins**, and restart NEXUS.
-- **Rules of thumb:**
-  - Choose the lowest priority that is honest.
-  - Set `Duration` for news; leave it null for ongoing state.
-  - Use `IsDormant` for state that only Island Center needs.
-  - Use `CanBeForeground = false` plus an `Indicator` for background state.
-  - Pulse for minor events rather than expanding the island.
+- **Built in:** register it in `NexusHost.RegisterProviders`. It shows up in Settings › Modules on its own.
+- **As a plugin:** build a class library that references `Nexus.Core` (see `samples/Nexus.Samples.HourlyChime`), copy the DLL into `%LOCALAPPDATA%\Nexus\plugins`, turn on Settings › General › Load plugins, and restart NEXUS.
+- Choose the lowest priority that is honest. Set `Duration` for news and leave it empty for ongoing state. Use `IsDormant` for state only Island Center needs, `CanBeForeground = false` with an `Indicator` for background state, and a pulse instead of expanding the island for small events.
 
-## 10. Creating a new widget
+</details>
 
-Plugins rarely need one: `GenericContent` and `GlanceContent` are rendered by the built-in widgets. For a custom presentation:
+<details>
+<summary><b>Writing a widget</b></summary>
+
+Plugins rarely need one, because `GenericContent` and `GlanceContent` already have built-in widgets. For a custom look:
 
 ```csharp
 public sealed record PomodoroContent(TimeSpan Remaining, bool Break);
@@ -309,22 +319,12 @@ public sealed class PomodoroWidget : Widget<PomodoroContent>
 }
 ```
 
-Register the widget in `NexusHost.BuildWidgets()`; later registrations take precedence. Rules:
-- Create views once and update them in place through `Apply`.
-- The island sizes itself from the content, so keep the height fixed per mode and cap text widths.
-- Start timers in `OnShown` and stop them in `OnHidden`.
-- Build with `Kit`, `NexusButton`, `ProgressTrack` and `Palette` so every theme works automatically.
+Register it in `NexusHost.BuildWidgets()`. Later registrations win. Create views once and update them in place through `Apply`, keep the height fixed for each mode, start timers in `OnShown` and stop them in `OnHidden`, and build with `Kit`, `NexusButton`, `ProgressTrack` and `Palette` so every theme works.
 
-## 11. Privacy and security
+</details>
 
-- No telemetry, no accounts, and no network requests except the ICS link you choose to add.
-- Runs without admin rights. No code injected into other processes, no keyboard hooks, no drivers.
-- Settings stay in `%LOCALAPPDATA%\Nexus`. Notification and meeting content is held in memory only, never written to disk.
-- The File Shelf saves only the paths of shelved files, in `%LOCALAPPDATA%\Nexus\shelf.json`, and only while *Remember shelf after restart* is on (turning it off deletes the file). The log records item counts, never file names or paths.
-- Screen-sharing switches let you hide notification previews and meeting titles.
+## Project status
 
----
+NEXUS builds cleanly in Debug and Release, all unit tests pass, and it runs daily on Windows 11. Every push is built, tested and published by the GitHub workflow.
 
-### Build status
-
-NEXUS builds cleanly in Debug and Release (`dotnet build Nexus.sln`), all unit tests pass (`dotnet test tests/Nexus.Core.Tests`), and it runs daily on Windows 11. The included GitHub workflow builds, tests and publishes a self-contained `win-x64` build on every push.
+No license has been chosen yet, so all rights are reserved by the author.
