@@ -1,7 +1,7 @@
 # Builds and tests NEXUS on a clean Windows runner, then builds the installer.
 # Every run uploads the portable build and the installer as artifacts.
 # Pushing a tag like v1.2.3 (matching <Version> in Directory.Build.props) also publishes a GitHub Release
-# with NEXUS-Setup-1.2.3.exe attached.
+# with NEXUS-Setup-1.2.3.exe attached, using docs/releases/v1.2.3.md as the release notes if it exists.
 name: build
 on:
   push:
@@ -50,4 +50,7 @@ jobs:
           $version = $tag.TrimStart('v')
           $setup = "installer/Output/NEXUS-Setup-$version.exe"
           if (-not (Test-Path $setup)) { throw "Tag $tag does not match <Version> in Directory.Build.props, so $setup was not built." }
-          gh release create $tag $setup --title "NEXUS $version" --generate-notes
+          # Hand-written notes in docs/releases/<tag>.md when they exist; otherwise GitHub lists the changes.
+          $notes = "docs/releases/$tag.md"
+          if (Test-Path $notes) { gh release create $tag $setup --title "NEXUS $version" --notes-file $notes }
+          else { gh release create $tag $setup --title "NEXUS $version" --generate-notes }
